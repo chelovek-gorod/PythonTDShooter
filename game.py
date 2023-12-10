@@ -6,6 +6,8 @@ import sys # модуль правильного выхода из игры
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from init import PG, SPRITES, init_src
 
+from player import Player
+
 # создаем игровое окно (заданной в константах ширины и высоты)
 SCREEN = PG.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -14,6 +16,9 @@ CLOCK = PG.time.Clock()
 
 # инициализируем (загружаем) игровые ресурсы
 init_src()
+
+# создаем игрока
+player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
 # счетчик кадров
 frame = 0
@@ -29,7 +34,8 @@ while is_on_game:
 
     SCREEN.blit(SPRITES['background'], (0, 0))
 
-    SCREEN.blit(SPRITES['player'], (0, 0)) # рисуем игрока в верхнем левом углу экрана
+    player.update()
+    SCREEN.blit(player.image, player.rect) # рисуем игрока в верхнем левом углу экрана
 
     SCREEN.blit(SPRITES['explosion'][exp_fr], (500, 300)) # рисуем текущий кадр взрыва в координатах X:500 Y:300
     exp_fr += 1 # переключаем следующий кадр взрыва

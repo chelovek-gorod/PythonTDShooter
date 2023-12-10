@@ -32,7 +32,7 @@ def get_sprite_sheet(file_name, frame_width, frame_height, frames):
     return sprite_sheet # возвращаем готовый список кадров
 
 # функция для загрузки тайловых спрайтов
-def get_sprite_sheet(file_name, image_width, image_height):
+def get_tile_sprite(file_name, image_width, image_height):
     tile = PG.image.load(SPRITES_PATH + file_name).convert()
     tile_width, tile_height = tile.get_width(), tile.get_height()
 
@@ -60,5 +60,6 @@ SPRITES = {}
 
 # функция инициализации (загрузки) игровых ресурсов (спрайты, звуки и шрифты)
 def init_src():
+    SPRITES['background'] = get_tile_sprite('bg_grass_128x128px.png')
     SPRITES['player'] = get_sprite('player_128x128px.png')
     SPRITES['explosion'] = get_sprite_sheet('explosion_128x128px_20frames.png', 128, 128, 20)

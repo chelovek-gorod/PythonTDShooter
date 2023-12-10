@@ -1,3 +1,5 @@
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+
 # Импортируем pygame в переменную PG
 import pygame as PG
 PG.init() # инициализируем pygame (без этого не работают шрифты и некоторый функционал)
@@ -36,14 +38,13 @@ def get_tile_sprite(file_name, image_width, image_height):
     tile = PG.image.load(SPRITES_PATH + file_name).convert()
     tile_width, tile_height = tile.get_width(), tile.get_height()
 
-    image = PG.Surface((tile_width, tile_height))
+    image = PG.Surface((image_width, image_height))
     image_x, image_y = 0, 0
 
     while image_y < image_height:
         while image_x < image_width:
             image.blit(tile, (image_x, image_y), (0, 0, tile_width, tile_height))
             image_x += tile_width
-            current_frame += 1
         
         image_x = 0
         image_y += tile_height
@@ -60,6 +61,6 @@ SPRITES = {}
 
 # функция инициализации (загрузки) игровых ресурсов (спрайты, звуки и шрифты)
 def init_src():
-    SPRITES['background'] = get_tile_sprite('bg_grass_128x128px.png')
+    SPRITES['background'] = get_tile_sprite('bg_grass_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
     SPRITES['player'] = get_sprite('player_128x128px.png')
     SPRITES['explosion'] = get_sprite_sheet('explosion_128x128px_20frames.png', 128, 128, 20)

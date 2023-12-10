@@ -4,6 +4,9 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 import pygame as PG
 PG.init() # инициализируем pygame (без этого не работают шрифты и некоторый функционал)
 
+SPRITE = PG.sprite.Sprite
+GROUP = PG.sprite.Group
+
 # функция для загрузки спрайтов (из одиночной картинки)
 def get_sprite(file_name):
     # возвращаем загруженное изображение с прозрачным фоном (если фон у изображения прозрачный)

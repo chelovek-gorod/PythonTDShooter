@@ -31,6 +31,25 @@ def get_sprite_sheet(file_name, frame_width, frame_height, frames):
     # если мы прошлись по всем рядам (все циклы выполнены)
     return sprite_sheet # возвращаем готовый список кадров
 
+# функция для загрузки тайловых спрайтов
+def get_sprite_sheet(file_name, image_width, image_height):
+    tile = PG.image.load(SPRITES_PATH + file_name).convert()
+    tile_width, tile_height = tile.get_width(), tile.get_height()
+
+    image = PG.Surface((tile_width, tile_height))
+    image_x, image_y = 0, 0
+
+    while image_y < image_height:
+        while image_x < image_width:
+            image.blit(tile, (image_x, image_y), (0, 0, tile_width, tile_height))
+            image_x += tile_width
+            current_frame += 1
+        
+        image_x = 0
+        image_y += tile_height
+
+    return image
+
 # создаем переменные с путями расположения (папки) спрайтов, звуков и шрифтов
 SPRITES_PATH = './src/sprites/'
 SOUNDS_PATH = './src/sounds/'

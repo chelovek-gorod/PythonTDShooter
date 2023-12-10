@@ -32,10 +32,10 @@ is_on_game = True # цикл запущен
 while is_on_game:
     CLOCK.tick(FPS) # ждем следующий кадр (время следующего обновления экрана)
 
-    SCREEN.blit(SPRITES['background'], (0, 0))
+    SCREEN.blit(SPRITES['background'], (0, 0)) # рисуем фон
 
     player.update()
-    SCREEN.blit(player.image, player.rect) # рисуем игрока в верхнем левом углу экрана
+    SCREEN.blit(player.image, player.rect) # рисуем игрока
 
     SCREEN.blit(SPRITES['explosion'][exp_fr], (500, 300)) # рисуем текущий кадр взрыва в координатах X:500 Y:300
     exp_fr += 1 # переключаем следующий кадр взрыва

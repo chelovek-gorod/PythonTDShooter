@@ -4,8 +4,8 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 import pygame as PG
 PG.init() # инициализируем pygame (без этого не работают шрифты и некоторый функционал)
 
-SPRITE = PG.sprite.Sprite
-GROUP = PG.sprite.Group
+SPRITE = PG.sprite.Sprite # выносим класс Sprite (из объекта sprite библиотеки pygame) в константу спрайтов
+GROUP = PG.sprite.Group # выносим класс Group (из объекта sprite библиотеки pygame) в константу группы спрайтов
 
 # функция для загрузки спрайтов (из одиночной картинки)
 def get_sprite(file_name):
@@ -36,23 +36,24 @@ def get_sprite_sheet(file_name, frame_width, frame_height, frames):
     # если мы прошлись по всем рядам (все циклы выполнены)
     return sprite_sheet # возвращаем готовый список кадров
 
-# функция для загрузки тайловых спрайтов
+# функция для загрузки тайловых спрайтов (одно изображение, собранное из "плиток" (тайлов))
 def get_tile_sprite(file_name, image_width, image_height):
-    tile = PG.image.load(SPRITES_PATH + file_name).convert()
-    tile_width, tile_height = tile.get_width(), tile.get_height()
+    tile = PG.image.load(SPRITES_PATH + file_name).convert() # загружаем картинку тайла
+    tile_width, tile_height = tile.get_width(), tile.get_height() # определяем ширину и высоту тайла
 
-    image = PG.Surface((image_width, image_height))
-    image_x, image_y = 0, 0
+    image = PG.Surface((image_width, image_height)) # создаем поверхность, размера итогового тайлового спрайта
+    image_x, image_y = 0, 0 # задаем координаты на поверхности, с которых начнем "выкладывать" тайлы
 
+    # цикл для прохода по вертикали поверхности и горизонтали, с шагом, равному высоте и ширине тайла
     while image_y < image_height:
         while image_x < image_width:
-            image.blit(tile, (image_x, image_y), (0, 0, tile_width, tile_height))
-            image_x += tile_width
-        
-        image_x = 0
-        image_y += tile_height
+            image.blit(tile, (image_x, image_y), (0, 0, tile_width, tile_height)) # отрисовываем тайл в текущих координатах
+            image_x += tile_width # смещаемся на ширину тайла по оси X
+        # когда мы выложили тайлы по горизотали
+        image_x = 0 # обнуляем координату X (чтобы сместится к началу поверхности, для отрисовки следующего ряда)
+        image_y += tile_height # смещаемся на высоту тайла по оси Y (для отрисовки следующего ряда)
 
-    return image
+    return image # возвращаем полученную картинку из тайлов
 
 # создаем переменные с путями расположения (папки) спрайтов, звуков и шрифтов
 SPRITES_PATH = './src/sprites/'
@@ -64,6 +65,8 @@ SPRITES = {}
 
 # функция инициализации (загрузки) игровых ресурсов (спрайты, звуки и шрифты)
 def init_src():
+    SPRITES['aim'] = get_sprite('aim_64x64px.png')
     SPRITES['background'] = get_tile_sprite('bg_grass_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
     SPRITES['player'] = get_sprite('player_128x128px.png')
+    SPRITES['player_bullet'] = get_sprite('bullet_12x12px.png')
     SPRITES['explosion'] = get_sprite_sheet('explosion_128x128px_20frames.png', 128, 128, 20)

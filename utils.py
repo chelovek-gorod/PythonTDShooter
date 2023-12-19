@@ -1,3 +1,5 @@
+# ФУНКЦИИ
+
 # импортируем функции для расчетов и конвертации градусов в радианы из библиотеки math
 from math import sqrt, atan2, cos, sin, degrees, radians
 

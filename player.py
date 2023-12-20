@@ -34,9 +34,9 @@ class Player(SPRITE):
         self.is_shooting = False # пытается ли игрок стрелять (сменим на True при зажатии левой кнопки мыши)
 
         self.bullets_fill = PLAYER_BULLETS # максимальный запас патронов (для обновления числа пуль после перезарядки)
-        self.bullets = 0 # текущее число пуль
+        self.bullets = self.bullets_fill # текущее число пуль
         self.reload_frames = round(PLAYER_RELOAD_TIMEOUT * FPS) # количество кадров, для перезарядки оружия
-        self.reload_delay = self.reload_frames # текущий номер кадра перезарядки (если перезаряжаемся)
+        self.reload_delay = 0 # текущий номер кадра перезарядки (если перезаряжаемся)
 
         self.hp = UNIT_HP # в поле hp записываем жизни персонажа игрока
         self.healthbar = Healthbar(self)  # создаем полоску здоровья
@@ -44,6 +44,13 @@ class Player(SPRITE):
 
         # создаем текстовый спрайт в верхнем левом углу, зеленого цвета, с количеством патронов
         self.bullets_label = Label(0, 0, 24, 6, (0, 255, 0), 'left', f'Bullets: {self.bullets}')
+
+    def prepare_to_next_level(self):
+        self.is_shooting = False
+        self.hp = UNIT_HP # восстанавливаем здоровье игроку
+        self.healthbar.render() # обновляем полосу здоровья игрока
+        self.bullets = self.bullets_fill
+        self.bullets_label.render(f'Bullets: {self.bullets}')
 
     # метод обновления (принимает координаты x и y курсора мыши, события мыши, группы спрайтов plasmas и walls)
     def update(self, mouse_x, mouse_y, events, plasmas, walls):

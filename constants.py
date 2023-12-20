@@ -23,7 +23,7 @@ PLAYER_BULLET_SPEED = 12 # пикселей за 1 FPS
 PLAYER_BULLET_POWER = 10 # урон, наносимый врагам
 PLAYER_SHUT_TIMEOUT = 0.16 # время да нового выстрела при стрельбе (секунд)
 PLAYER_RELOAD_TIMEOUT = 2.4 # время перезарядки оружия (секунд)
-PLAYER_BULLETS = 20 # патронов в обойме
+PLAYER_BULLETS = 24 # патронов в обойме
 
 # настройки ботов
 BOT_EASY_ARMOR = 2 # на это число делится урон от атаки игрока

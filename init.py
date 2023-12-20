@@ -97,6 +97,10 @@ MUSIC = {} # создаем словарь с фоновой музыкой
 
 # функция инициализации (загрузки) игровых ресурсов (спрайты, звуки и шрифты)
 def init_src():
+    # загружаем фоны для меню
+    SPRITES['main_menu'] = PG.image.load('./src/images/background_blue.jpg').convert()
+    SPRITES['next_menu'] = PG.image.load('./src/images/background.jpg').convert()
+    SPRITES['lose_menu'] = PG.image.load('./src/images/background_gray.jpg').convert()
     # загружаем тайловые спрайты, спрайты и анимированные спрайты
     SPRITES['bg_grass'] = get_tile_sprite('bg_grass_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
     SPRITES['bg_desert'] = get_tile_sprite('bg_desert_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -120,6 +124,7 @@ def init_src():
 
     # загружаем шрифты
     FONTS['regular'] = FONTS_PATH + 'Jura-Regular.ttf'
+    FONTS['bold'] = FONTS_PATH + 'Jura-Bold.ttf'
 
     # загружаем фоновую музыку
     MUSIC['level_1'] = SOUNDS_PATH + 'bgm_level_1.mp3'

@@ -1,7 +1,7 @@
 # КНОПКИ для игрового меню
 
-# из файла init импортируем PG(PyGame), класс SPRITE, класс GROUP и словарь со шрифтами FONTS
-from init import PG, SPRITE, GROUP, FONTS
+# из файла init импортируем PG(PyGame), класс SPRITE, класс GROUP, словарь со шрифтами FONTS и словарь со звуками SOUNDS
+from init import PG, SPRITE, GROUP, FONTS, SOUNDS
 
 # настройки размеров кнопки, обводки и текста
 BTN_WIDTH = 360 # ширина кнопки
@@ -21,7 +21,7 @@ class Button (SPRITE):
     # функция-конструктор (создает объект, принимает координаты x и y, функцию клика, текст, цвета текста, кнопки и активации)
     def __init__(self, x, y, onclick, text, text_color = (255, 255, 255), button_color = (0, 0, 0, 192), active_color = (0, 255, 0)):
         SPRITE.__init__(self) # вызов конструктора родительского класса (обязательно нужно делать в самом начале)
-        self.font = PG.font.Font(FONTS['bold'], FONT_SIZE) # в поле font записываем шрифт, заданного размера
+        self.font = PG.font.Font(FONTS['button'], FONT_SIZE) # в поле font записываем шрифт, заданного размера
         self.text = text # в поле text сохраняем текст кнопки
         self.text_color = text_color # в поле text_color сохраняем цвет текста
         self.button_color = button_color # в поле button_color сохраняем цвет кнопки
@@ -54,10 +54,13 @@ class Button (SPRITE):
         # если мышь наведена на кнопку
         if mouse_x > self.rect.x and mouse_x < self.rect.right and mouse_y > self.rect.y and mouse_y < self.rect.bottom:
             for event in events: # если мышь нажата - активируем функцию, привязанную к кнопке
-                if event.type == PG.MOUSEBUTTONUP and event.button == 1 : return self.onclick()
+                if event.type == PG.MOUSEBUTTONUP and event.button == 1:
+                    SOUNDS['click'].play()
+                    return self.onclick()
             if self.is_active == False: # если кнопка не активна (курсор навели только что)
                 self.is_active = True # меняем состояние кнопки
                 self.render() # перерисовываем кнопку с обводкой и новым цветом текста
+                SOUNDS['menu'].play()
         # если мышь не наведена на кнопку, но кнопка активна
         elif self.is_active == True:
             self.is_active = False # меняем состояние кнопки

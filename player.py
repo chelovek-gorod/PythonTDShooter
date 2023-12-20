@@ -4,7 +4,7 @@
 from init import PG, SPRITE, SPRITES, SOUNDS
 # из файла constants импортируем все необходимые переменные, которые понадобятся для создания и управления персонажем игрока
 from constants import FPS, HALF_UNIT_SIZE, UNIT_HP, PLAYER_ARMOR, PLAYER_SPEED, \
-    PLAYER_SHUT_TIMEOUT, PLAYER_RELOAD_TIMEOUT, PLAYER_BULLETS, BOT_PLASMA_POWER
+    PLAYER_SHUT_TIMEOUT, PLAYER_RELOAD_TIMEOUT, PLAYER_BULLETS, BOT_PLASMA_POWER, SPIDER_POWER
 # из файла utils импортируем функцию, поворачивающую спрайт к определенной цели 
 from utils import turn_sprite_to_target
 # из файла bullet импортируем класс Bullet (для создания объектов пуль)
@@ -53,7 +53,7 @@ class Player(SPRITE):
         self.bullets_label.render(f'Bullets: {self.bullets}')
 
     # метод обновления (принимает координаты x и y курсора мыши, события мыши, группы спрайтов plasmas и walls)
-    def update(self, mouse_x, mouse_y, events, plasmas, walls):
+    def update(self, mouse_x, mouse_y, events, plasmas, spiders_group, walls):
         # поворачиваем игрока к курсору мыши
         turn_sprite_to_target(self, mouse_x, mouse_y)
         # -self.direction - так как в PyGame угол отсчитывается против часовой стрелки
@@ -117,6 +117,16 @@ class Player(SPRITE):
             Effect(plasma.rect.centerx, plasma.rect.centery, 'blood' + str(randint(1,3)), plasma.direction)
             # обновляем полосу здоровья, если HP > 0
             if self.hp >= 0 : self.healthbar.render()
+
+        # проверяем столкновение с паучками
+        for spider in PG.sprite.spritecollide(self, spiders_group, False):
+            if spider.is_active:
+                self.hp -= SPIDER_POWER
+                Effect(spider.rect.centerx, spider.rect.centery, 'blood' + str(randint(1,3)), spider.direction)
+                spider.strike()
+                SOUNDS['ouch'].play()
+                # обновляем полосу здоровья, если HP > 0
+                if self.hp >= 0 : self.healthbar.render()
 
     # метод отрисовки персонажа игрока (принимает игровое окно)
     def draw(self, screen):

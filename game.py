@@ -5,8 +5,8 @@
 
 import sys # импорт модуля sys, для правильного выхода из игры
 
-# из файла constants импортируем размеры игрового окна, частоту обновления экрана, здоровье юнитов
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, UNIT_HP
+# из файла constants импортируем размеры игрового окна, частоту обновления экрана, время до входа в меню после окончания уровня
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, LEVEL_END_TIMEOUT
 # из файла init импортируем PG(PyGame), словарь со спрайтами SPRITES, функции init_src и bg_music_play, звуки, музыку и событие остановки трека
 from init import PG, SPRITES, init_src, bg_music_play, SOUNDS, MUSIC, MUSIC_END
 # из файла level импортируем список игровых уровней levels_list и функцию создания уровня get_level
@@ -21,6 +21,7 @@ from effect import effects_group
 from label import labels_group, Label
 from plasma import plasmas_group
 from bot import bots_group
+from spider import spiders_group
 from button import Button, buttons_group
 from title import Title, titles_group
 
@@ -38,8 +39,8 @@ def get_menu(menu_type = ''):
         background = SPRITES['next_menu'] # обновляем фоновое изображение для текущего меню
         Title(SCREEN_WIDTH/2, 300, 'pause', 60, (255, 255, 255)) # создаем заголовок меню
         Button(SCREEN_WIDTH/2, 400, resume_game, 'RESUME') # создаем кнопку с координатами, функцией клика и текстом
-        Button(SCREEN_WIDTH/2, 500, restart_game, 'MAIN MENU') # создаем кнопку с координатами, функцией клика и текстом
-        Button(SCREEN_WIDTH/2, 600, exit_game, 'EXIT') # создаем кнопку с координатами, функцией клика и текстом
+        Button(SCREEN_WIDTH/2, 600, restart_game, 'MAIN MENU') # создаем кнопку с координатами, функцией клика и текстом
+        Button(SCREEN_WIDTH/2, 700, exit_game, 'EXIT') # создаем кнопку с координатами, функцией клика и текстом
     elif menu_type == 'game_over':
         background = SPRITES['lose_menu'] # обновляем фоновое изображение для текущего меню
         Title(SCREEN_WIDTH/2, 100, 'GAME OVER', 90, (0, 0, 0), (255, 0, 0)) # создаем заголовок меню
@@ -54,8 +55,8 @@ def get_menu(menu_type = ''):
         background = SPRITES['next_menu'] # обновляем фоновое изображение для текущего меню
         Title(SCREEN_WIDTH/2, 100, f'Level {level} done', 90, (255, 255, 255)) # создаем заголовок меню
         Button(SCREEN_WIDTH/2, 400, next_level, 'CONTINUE') # создаем кнопку с координатами, функцией клика и текстом
-        Button(SCREEN_WIDTH/2, 500, restart_game, 'MAIN MENU') # создаем кнопку с координатами, функцией клика и текстом
-        Button(SCREEN_WIDTH/2, 600, exit_game, 'EXIT') # создаем кнопку с координатами, функцией клика и текстом
+        Button(SCREEN_WIDTH/2, 600, restart_game, 'MAIN MENU') # создаем кнопку с координатами, функцией клика и текстом
+        Button(SCREEN_WIDTH/2, 700, exit_game, 'EXIT') # создаем кнопку с координатами, функцией клика и текстом
 
 # функция запуска игры
 def start_game():
@@ -84,6 +85,7 @@ def game_over():
     is_on_game = False # переключаем игру в состояние False (для показа меню)
     get_menu('game_over') # создаем меню проигрыша
     SOUNDS['game_over'].play() # проигрываем звуковой эффект проигрыша
+    bg_music_play(MUSIC['lose']) # запускаем фоновую музыку для данного уровня
 
 # функция победы
 def game_win():
@@ -108,7 +110,7 @@ def restart_game():
         player.kill() # уничтожаем игрока
     player = Player() # создаем игрока
     get_menu('main') # создаем главное меню игры
-    bg_music_play(MUSIC['win']) # запускаем фоновую музыку для главного меню
+    bg_music_play(MUSIC['main']) # запускаем фоновую музыку для главного меню
 
 # функция обновления меню (принимает координаты мыши и события, для отслеживания наведения на кнопки и клика)
 def menu_loop(mouse_x, mouse_y, events):
@@ -118,13 +120,16 @@ def menu_loop(mouse_x, mouse_y, events):
 
 # функция обновления игры (принимает координаты мыши и события)
 def game_loop(mouse_x, mouse_y, events):
+    global level_end_frames # получаем доступ к редактированию переменной level_end_frames
     walls_group.draw(SCREEN) # рисуем стены уровня
-    player.update(mouse_x, mouse_y, events, plasmas_group, walls_group) # обновляем игрока
+    player.update(mouse_x, mouse_y, events, plasmas_group, spiders_group, walls_group) # обновляем игрока
     bullets_group.update(walls_group) # обновляем пули игрока
     bullets_group.draw(SCREEN) # рисуем пули игрока
 
     plasmas_group.update(walls_group) # обновляем выстрелы врагов
     plasmas_group.draw(SCREEN) # рисуем выстрелы врагов
+
+    spiders_group.update(bullets_group, walls_group, SCREEN) # обновляем паучков
 
     player.draw(SCREEN) # рисуем игрока
     bots_group.update(player, bullets_group, walls_group, SCREEN) # обновляем врагов
@@ -134,18 +139,22 @@ def game_loop(mouse_x, mouse_y, events):
 
     if player.hp <= 0 : game_over() # если у игрока закончилось hp - вызываем функцию проигрыша
 
-    if len(bots_group) == 0: # если уничтожили всех врагов
-        if level == levels_number: game_win() # если это был последний уровень - вызываем функцию победы
-        else : level_cleared() # иначе - вызываем функцию завершения уровня
+    if len(bots_group) == 0 and len(spiders_group) == 0: # если уничтожили всех врагов и паучков
+        if level_end_frames > 0 : level_end_frames -= 1 # если не вышло время выхода - ждем
+        else: # после ожидания отсчета кадров для завершения уровня
+            if level == levels_number: game_win() # если это был последний уровень - вызываем функцию победы
+            else : level_cleared() # иначе - вызываем функцию завершения уровня
 
 # функция обновления уровня
 def next_level():
-    global level, background, level_background, is_on_game # получаем доступ к редактированию переменных
+    global level, level_end_frames, background, level_background, is_on_game # получаем доступ к редактированию переменных
     bullets_group.empty() # очищаем группу спрайтов пуль игрока
     walls_group.empty() # очищаем группу спрайтов стен
     effects_group.empty() # очищаем группу спрайтов с эффектами
     plasmas_group.empty() # очищаем группу спрайтов с плазменными выстрелами врагов
     bots_group.empty() # очищаем группу спрайтов врагов
+    spiders_group.empty() # очищаем группу спрайтов паучков
+    level_end_frames = round(LEVEL_END_TIMEOUT * FPS) # число кадров до окончания уровня
     player.prepare_to_next_level() # восстанавливаем hp и пули игрока
     level_data = levels_list[level] # получаем данные о текущем уровне из списка уровней
     level_background = SPRITES[level_data['background']] # обновляем фон для текущего уровня
@@ -159,6 +168,9 @@ def next_level():
 
 PG.mouse.set_visible(False) # отключаем отображение курсора мыши
 SCREEN = PG.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # создаем игровое окно (заданной в константах ширины и высоты)
+ICON = PG.image.load('./src/images/icon.png').convert_alpha() # загружаем иконку для окна игры
+PG.display.set_icon(ICON) # устанавливаем игровому окну иконку
+PG.display.set_caption('TDShooter') # устанавливаем игровому окну заголовок
 CLOCK = PG.time.Clock() # создаем счетчик обновления экрана
 init_src() # инициализируем (загружаем) игровые ресурсы
 
@@ -169,6 +181,7 @@ level = 0 # текущий игровой уровень
 levels_number = len(levels_list) # определяем количество уровней
 # создаем текст в верхнем правом углу с указанием текущего уровня
 level_label = Label(SCREEN_WIDTH, 0, 24, 6, (0, 255, 0), 'right', f'Level: {level}')
+level_end_frames = 0 # число кадров до окончания уровня
 
 background = None # переменная фона, рисуемого в игровом цикле
 level_background = None # переменная фона текущего уровня

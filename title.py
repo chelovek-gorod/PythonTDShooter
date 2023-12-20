@@ -11,7 +11,7 @@ class Title (SPRITE):
     # функция-конструктор (создает объект, принимает координаты x и y, текст, размер шрифта и цвета текста)
     def __init__(self, x, y, text, font_size, text_color = (255, 255, 255), shadow_color = (0, 0, 0), shadow_size = 3):
         SPRITE.__init__(self) # вызов конструктора родительского класса (обязательно нужно делать в самом начале)
-        font = PG.font.Font(FONTS['bold'], font_size) # в поле font записываем шрифт, заданного размера
+        font = PG.font.Font(FONTS['title'], font_size) # в поле font записываем шрифт, заданного размера
         self.text = font.render(text, True, text_color) # создаем изображение из текста (True - сглаживать пиксели)
         self.shadow = font.render(text, True, shadow_color + ( int(128 / shadow_size**2), )) # создаем изображение тени
         self.text_rect = self.text.get_rect() # создаем прямоугольник по размерам изображения из текста

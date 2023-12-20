@@ -105,14 +105,18 @@ def init_src():
     SPRITES['bg_grass'] = get_tile_sprite('bg_grass_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
     SPRITES['bg_desert'] = get_tile_sprite('bg_desert_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
     SPRITES['bg_night'] = get_tile_sprite('bg_night_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
-    SPRITES['wall'] = get_sprite('wall_128x128px.png')
+    SPRITES['bg_tech'] = get_tile_sprite('bg_tech_128x128px.png', SCREEN_WIDTH, SCREEN_HEIGHT)
+    SPRITES['wall_stone'] = get_sprite('wall_stone_128x128px.png')
+    SPRITES['wall_tech'] = get_sprite('wall_tech_128x128px.png')
     SPRITES['aim'] = get_sprite('aim_64x64px.png')
     SPRITES['player'] = get_sprite('player_128x128px.png')
     SPRITES['player_bullet'] = get_sprite('bullet_12x12px.png')
-    SPRITES['bot'] = get_sprite('bot_128x128px.png')
-    SPRITES['droid'] = get_sprite('droid_128x128px.png')
+    SPRITES['bot'] = get_sprite('enemy_bot_128x128px.png')
+    SPRITES['droid'] = get_sprite('enemy_droid_128x128px.png')
+    SPRITES['cyborg'] = get_sprite('enemy_cyborg_128x128px.png')
     SPRITES['plasma'] = get_sprite('plasma_12x12px.png')
     SPRITES['ricochet'] = get_sprite_sheet('explosion_64x64px_17frames.png', 64, 64, 17)
+    SPRITES['spider'] = get_sprite_sheet('enemy_spider_64x64px_12frames.png', 64, 64, 12)
     SPRITES['splash'] = get_sprite_sheet('plasma_splash_128x128px_20frames.png', 128, 128, 20)
     SPRITES['blood1'] = get_sprite_sheet('blood_0_128x128px_8frames.png', 128, 128, 8)
     SPRITES['blood2'] = get_sprite_sheet('blood_1_128x128px_8frames.png', 128, 128, 8)
@@ -123,8 +127,9 @@ def init_src():
     SPRITES['destroy'] = get_sprite_sheet('explosion_256x256px_48frames.png', 256, 256, 48)
 
     # загружаем шрифты
-    FONTS['regular'] = FONTS_PATH + 'Jura-Regular.ttf'
-    FONTS['bold'] = FONTS_PATH + 'Jura-Bold.ttf'
+    FONTS['label'] = FONTS_PATH + 'Jura-SemiBold.ttf'
+    FONTS['button'] = FONTS_PATH + 'Jura-Bold.ttf'
+    FONTS['title'] = FONTS_PATH + 'AlumniSans-ExtraBoldItalic.ttf'
 
     # загружаем фоновую музыку
     MUSIC['level_1'] = SOUNDS_PATH + 'bgm_level_1.mp3'
@@ -132,12 +137,17 @@ def init_src():
     MUSIC['level_3'] = SOUNDS_PATH + 'bgm_level_3.mp3'
     MUSIC['level_4'] = SOUNDS_PATH + 'bgm_level_4.mp3'
     MUSIC['level_5'] = SOUNDS_PATH + 'bgm_level_5.mp3'
+    MUSIC['main'] = SOUNDS_PATH + 'bgm_main.mp3'
     MUSIC['win'] = SOUNDS_PATH + 'bgm_win.mp3'
+    MUSIC['lose'] = SOUNDS_PATH + 'bgm_lose.mp3'
 
     # загружаем звуковые эффекты
+    SOUNDS['menu'] = init_sound('se_menu.mp3')
+    SOUNDS['click'] = init_sound('se_click.mp3')
     SOUNDS['alarm'] = init_sound('se_alarm.mp3')
     SOUNDS['game_over'] = init_sound('se_game_over.mp3')
     SOUNDS['explosion'] = init_sound('se_explosion.mp3')
     SOUNDS['plasma'] = init_sound('se_plasma.mp3')
     SOUNDS['reload'] = init_sound('se_reload.mp3')
     SOUNDS['shut'] = init_sound('se_shut.mp3')
+    SOUNDS['ouch'] = init_sound('se_ouch.mp3')

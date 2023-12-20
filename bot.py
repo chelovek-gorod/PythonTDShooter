@@ -3,8 +3,9 @@
 # из файла init импортируем PG(PyGame), класс SPRITE, словарь со спрайтами SPRITES и класс GROUP (для создания групп спрайтов)
 from init import PG, SPRITE, SPRITES, GROUP
 # из файла constants импортируем все необходимые переменные, которые понадобятся для создания и управления врагами
-from constants import FPS, UNIT_HP, BOT_EASY_ARMOR, BOT_HARD_ARMOR, BOT_EASY_SPEED, BOT_HARD_SPEED, \
-    BOT_PLASMA_MIN_TIMEOUT, BOT_PLASMA_MAX_TIMEOUT, PLAYER_BULLET_POWER
+from constants import FPS, UNIT_HP, BOT_ARMOR, DROID_ARMOR, CYBORG_ARMOR, BOT_SPEED, DROID_SPEED, CYBORG_SPEED, \
+    BOT_PLASMA_MIN_TIMEOUT, BOT_PLASMA_MAX_TIMEOUT, DROID_PLASMA_MIN_TIMEOUT, DROID_PLASMA_MAX_TIMEOUT, \
+    CYBORG_PLASMA_MIN_TIMEOUT, CYBORG_PLASMA_MAX_TIMEOUT, PLAYER_BULLET_POWER
 # из файла utils импортируем функцию, поворачивающую спрайт к определенной цели 
 from utils import turn_sprite_to_target
 # из файла plasma импортируем класс Plasma (для создания объектов плазмы от вражеских выстрелов)
@@ -28,19 +29,27 @@ class Bot(SPRITE):
         self.image = self.start_image # в поле image будем хранить повернутый спрайт для отрисовки
         self.rect = self.image.get_rect(center = (x, y)) # создаем прямоугольник по размерам спрайта с центрам в x и y
         self.hp = UNIT_HP # в поле hp записываем жизни врага
-        # в поля armor и speed записываем защиту и скорость, в зависимости от типа врага
+        # в поля armor и speed записываем защиту и скорость, время перезарядки в зависимости от типа врага
         if bot_type == 'droid':
-            self.armor = BOT_EASY_ARMOR
-            self.speed = BOT_EASY_SPEED
+            self.armor = DROID_ARMOR
+            self.speed = DROID_SPEED
+            self.shut_min_frames = round(DROID_PLASMA_MIN_TIMEOUT * FPS) # минимальное число кадров для следующего выстрела
+            self.shut_max_frames = round(DROID_PLASMA_MAX_TIMEOUT * FPS) # максимальное число кадров для следующего выстрела
+            self.shut_delay = randint(self.shut_min_frames, self.shut_max_frames) # число кадров для следующего выстрела
+        elif bot_type == 'cyborg':
+            self.armor = CYBORG_ARMOR
+            self.speed = CYBORG_SPEED
+            self.shut_min_frames = round(CYBORG_PLASMA_MIN_TIMEOUT * FPS) # минимальное число кадров для следующего выстрела
+            self.shut_max_frames = round(CYBORG_PLASMA_MAX_TIMEOUT * FPS) # максимальное число кадров для следующего выстрела
+            self.shut_delay = randint(self.shut_min_frames, self.shut_max_frames) # число кадров для следующего выстрела
         else:
-            self.armor = BOT_HARD_ARMOR
-            self.speed = BOT_HARD_SPEED
+            self.armor = BOT_ARMOR
+            self.speed = BOT_SPEED
+            self.shut_min_frames = round(BOT_PLASMA_MIN_TIMEOUT * FPS) # минимальное число кадров для следующего выстрела
+            self.shut_max_frames = round(BOT_PLASMA_MAX_TIMEOUT * FPS) # максимальное число кадров для следующего выстрела
+            self.shut_delay = randint(self.shut_min_frames, self.shut_max_frames) # число кадров для следующего выстрела
         self.direction = 0 # задаем начальное направление врага (любое от 0 до 360 градусов, он все равно потом повернется к игроку)
         self.move_dir = randint(0, 3) # в поле move_dir сторона, направления движения: 0 - вверх, 1 - вправо, 2 - вниз, 3 - влево.
-        
-        self.shut_min_frames = round(BOT_PLASMA_MIN_TIMEOUT * FPS) # минимальное число кадров для следующего выстрела
-        self.shut_max_frames = round(BOT_PLASMA_MAX_TIMEOUT * FPS) # максимальное число кадров для следующего выстрела
-        self.shut_delay = randint(self.shut_min_frames, self.shut_max_frames) # число кадров для следующего выстрела
 
         self.healthbar = Healthbar(self) # создаем полоску здоровья
 

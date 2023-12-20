@@ -9,9 +9,9 @@ walls_group = GROUP()
 # класс Wall (наследуется от класса SPRITE из библиотеки PyGame)
 class Wall(SPRITE):
     # функция-конструктор (создает объект, принимает координаты x и y)
-    def __init__(self, x, y):
+    def __init__(self, x, y, wall_type = 'wall_stone'):
         SPRITE.__init__(self) # вызов конструктора родительского класса (обязательно нужно делать в самом начале)
-        self.image = SPRITES['wall'] # спрайт стены
+        self.image = SPRITES[wall_type] # спрайт стены
         self.rect = self.image.get_rect() # создаем прямоугольник по размерам спрайта
         # задаем координаты прямоугольнику
         self.rect.x = x
